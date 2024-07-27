@@ -1,0 +1,36 @@
+import lcd_display as ld
+import socket
+def client_():
+host = '192.168.43.239'
+port = 1234
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+try:
+while True:
+client_socket.connect((host, port))
+print("Connection successful")
+file_path = "/home/numplate/Desktop/aa.jpg" # Ensure this path is correct and points to the file you want to send
+with open(file_path, 'rb') as f: # Open the file in binary mode
+data = f.read()
+client_socket.sendall(data)
+print("Data sent")
+except Exception as e:
+print(f"Error: {e}")
+finally:
+client_socket.close()
+print("Connection closed")
+return
+def displaying(text,line,delay,clean=True,cl_line=3):
+#ld.lcd_show(text,line,delay)
+if clean ==True:
+#ld.lcd_clean(cl_line)
+pass
+return
+if _name_ == "_main_":
+con = [16,7,8,25,24,23,18]
+#ld.variables(con)
+texts = ["Booting","initiated.......!","Welcome!...... ","..............","number plate","detection","Developed by","Suman","Swetha","Udhayashree","Vishal","Sabari","Ram Kumar","Booting","completed"]
+for num in range (0,len(texts),2):
+displaying(texts[num],1,0,clean=False)
+displaying(texts[num+1],2,2,clean=True,cl_line=3)
+client_()
+
