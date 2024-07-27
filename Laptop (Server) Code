@@ -1,0 +1,61 @@
+from ultralytics import YOLO
+from io import BytesIO
+from PIL import Image
+import urllib.request
+import numpy as np
+import easyocr
+import socket
+import shutil
+import os
+def server_():
+host = '192.168.43.239' # Server's IP address
+port = 1234
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_socket.bind((host, port))
+server_socket.listen(1)
+print(f"Server listening on {host}:{port}")
+try:
+connection, client_address = server_socket.accept()
+print(f"Connection from {client_address} established")
+data_received = b''
+while True:
+data = connection.recv(1024)
+if not data:
+break
+data_received += data
+file_path = "D:\\Numplate\\img.jpg" # Ensure this path is correct and points to where you want to save the received file
+with open(file_path, 'wb') as f: # Open the file in binary mode
+f.write(data_received)
+print("Data written to file")
+except Exception as e:
+print(f"Error: {e}")
+finally:
+connection.close()
+server_socket.close()
+print("Server connection closed")
+def AI_detection_():
+image = Image.open("D:\\Numplate\\img.jpg")
+resized_image = image.resize((640,640))
+results = model(source = resized_image,conf = 0.6,save_crop = True)
+text_converter()
+return
+def text_converter():
+try:
+model="D:\\Numplate\\english_g2"
+reader = easyocr.Reader(['en'], model_storage_directory=model, download_enabled=False, gpu=False)
+image_path =""
+result = reader.readtext(image_path)
+extracted_text = ' '.join([text[1] for text in result])
+except:
+extracted_text = "not detected"
+finally:
+shutil.rmtree('E:\\others\\data_set_for _AI\\data_car\\runs\\detect')
+os.remove("img.jpg")
+print(extracted_text)
+global text
+text = extracted_text
+return
+if _name_ == "_main_":
+model = YOLO("number_best.pt")
+reader = easyocr.Reader(['en'])
+server_()
